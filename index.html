@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កំណត់ហេតុកំពូលស្នេហ៍ - Cute Ocean Shared Journal</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ocean: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        },
+                        skyPastel: '#caf0f8',
+                        mintPastel: '#d8f3dc',
+                        softPink: '#ffccd5',
+                    },
+                    fontFamily: {
+                        kantumruy: ['Kantumruy Pro', 'sans-serif'],
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        moul: ['Moul', 'serif'],
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'float-slow': 'float 7s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                        'bounce-soft': 'bounceSoft 2s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-10px) rotate(2deg)' },
+                        },
+                        bounceSoft: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Kantumruy+Pro:wght@300;400;600;700&family=Moul&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background: linear-gradient(180deg, #e0f2fe 0%, #caf0f8 50%, #e0f2fe 100%);
+            background-attachment: fixed;
+        }
+
+        .font-moul { font-family: 'Moul', serif; }
+        .font-fredoka { font-family: 'Fredoka', sans-serif; }
+
+        /* Floating Bubbles Background */
+        .bubble {
+            position: fixed;
+            bottom: -50px;
+            background: rgba(255, 255, 255, 0.45);
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8), 0 0 12px rgba(56, 189, 248, 0.3);
+            animation: rise 15s infinite ease-in;
+            z-index: 0;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            20% { opacity: 0.7; }
+            100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Tape Effect for Polaroid */
+        .washi-tape {
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            backdrop-filter: blur(2px);
+            transform: rotate(-3deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e0f2fe; }
+        ::-webkit-scrollbar-thumb { background: #7dd3fc; border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-700 relative overflow-x-hidden pb-32">
+
+    <div id="bubbles-container"></div>
+
+    <header class="sticky top-0 z-30 bg-white/70 backdrop-blur-md border-b border-sky-200/60 shadow-sm transition-all">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-white shadow-md shadow-sky-300">
+                    <i class="fa-solid fa-cloud-moon text-xl animate-float"></i>
+                </div>
+                <div>
+                    <h1 class="font-moul text-sky-600 text-sm sm:text-base leading-tight flex items-center gap-1.5">
+                        កំណត់ហេតុកំពូលស្នេហ៍ <span class="text-[10px] text-pink-400 font-fredoka bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">✨ Shared Cloud</span>
+                    </h1>
+                    <p class="text-[11px] text-sky-500 font-fredoka">កន្លែងចែករំលែករឿងរ៉ាវ និងអនុស្សាវរីយ៍</p>
+                </div>
+            </div>
+
+            <!-- Write Button -->
+            <button onclick="openCreateStoryModal()" class="bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold shadow-md shadow-sky-300/50 transition transform hover:scale-105 flex items-center gap-2">
+                <i class="fa-solid fa-feather-pointed"></i>
+                <span>សរសេររឿងរ៉ាវ</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 relative z-10 space-y-6">
+
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-sky-300/60 via-blue-200/50 to-pink-200/50 rounded-3xl p-6 sm:p-8 border border-white/80 shadow-sm relative overflow-hidden text-center">
+            <div class="relative z-10 max-w-xl mx-auto space-y-2">
+                <span class="inline-block px-3 py-1 bg-white/80 text-sky-600 rounded-full text-xs font-bold tracking-wide shadow-sm">
+                    🌊 Cloud Shared Journal
+                </span>
+                <h2 class="text-lg sm:text-xl font-bold font-moul text-slate-800 leading-relaxed">
+                    ចែករំលែករឿងរ៉ាវ និងរូបភាពរបស់អ្នកទៅកាន់អ្នកគ្រប់គ្នា
+                </h2>
+                <p class="text-xs text-slate-600">
+                    រាល់អត្ថបទ និងរូបភាពដែលអ្នកសរសេរ នឹងត្រូវបង្ហាញជូនអ្នកទស្សនាទាំងអស់មើលឃើញភ្លាមៗ! ☁️
+                </p>
+            </div>
+            <i class="fa-solid fa-cloud text-white/60 text-6xl absolute -bottom-4 -left-4"></i>
+            <i class="fa-solid fa-cloud text-white/60 text-5xl absolute -top-2 -right-2"></i>
+        </div>
+
+        <!-- Stories Feed -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-heart text-pink-400"></i>
+                    <span>រឿងរ៉ាវពីអ្នកទស្សនាទាំងអស់</span>
+                    <span id="story-count-badge" class="bg-sky-200 text-sky-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                </h3>
+            </div>
+
+            <!-- Realtime Status Indicator -->
+            <div id="loading-spinner" class="py-12 text-center text-sky-500 font-bold text-xs flex flex-col items-center gap-2">
+                <i class="fa-solid fa-circle-notch fa-spin text-2xl text-sky-400"></i>
+                <span>កំពុងទាញយករឿងរ៉ាវពី Cloud Database...</span>
+            </div>
+
+            <!-- Grid List -->
+            <div id="stories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- Javascript will inject story cards here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="stories-empty" class="hidden text-center py-16 bg-white/60 backdrop-blur-sm rounded-3xl border-2 border-dashed border-sky-200">
+                <div class="w-14 h-14 bg-sky-100 text-sky-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h4 class="font-bold text-slate-700 text-sm mb-1">មិនទាន់មានរឿងរ៉ាវនៅឡើយទេ</h4>
+                <p class="text-xs text-slate-500 mb-4">ក្លាយជាមនុស្សដំបូងគេដែលចែករំលែករឿងរ៉ាវនៅទីនេះ!</p>
+                <button onclick="openCreateStoryModal()" class="text-xs text-sky-600 font-bold hover:underline">
+                    + សរសេររឿងរ៉ាវដំបូង
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 max-w-lg w-[92%] px-2">
+        <div class="bg-white/95 backdrop-blur-md p-3 rounded-3xl border-2 border-sky-200 shadow-xl shadow-sky-300/30 flex flex-col space-y-2">
+            
+            <div class="flex items-center space-x-3">
+                <!-- Animated Vinyl Record -->
+                <div class="relative flex-shrink-0 cursor-pointer" onclick="togglePlay()">
+                    <div id="vinyl-disc" class="w-11 h-11 rounded-full bg-slate-900 border-2 border-sky-300 flex items-center justify-center shadow-md relative overflow-hidden">
+                        <div class="w-3.5 h-3.5 rounded-full bg-sky-400 border-2 border-white flex items-center justify-center">
+                            <div class="w-1 h-1 rounded-full bg-white"></div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-pink-400 text-white rounded-full flex items-center justify-center text-[9px] shadow">
+                        <i class="fa-solid fa-music"></i>
+                    </div>
+                </div>
+
+                <!-- Track Info & Audio File Selector -->
+                <div class="flex-grow min-w-0">
+                    <div class="flex items-center justify-between mb-0.5">
+                        <h4 id="song-title" class="text-xs font-bold text-slate-800 truncate">ជ្រើសរើសបទចម្រៀងពីឧបករណ៍...</h4>
+                        <span id="music-time" class="text-[10px] text-slate-400 font-mono">00:00</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <input type="range" id="audio-progress" value="0" min="0" max="100" class="w-full h-1 bg-sky-100 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                </div>
+
+                <!-- Play Controls & Upload Button -->
+                <div class="flex items-center space-x-2 flex-shrink-0">
+                    <button onclick="togglePlay()" id="play-btn" class="w-8 h-8 rounded-full bg-gradient-to-r from-sky-400 to-blue-400 text-white flex items-center justify-center shadow hover:scale-105 transition text-xs">
+                        <i class="fa-solid fa-play ml-0.5"></i>
+                    </button>
+                    
+                    <!-- Choose Audio File from Device -->
+                    <label class="w-8 h-8 rounded-full bg-pink-100 text-pink-500 hover:bg-pink-200 flex items-center justify-center cursor-pointer shadow-sm transition text-xs" title="ជ្រើសរើសបទចម្រៀងពីទូរស័ព្ទ/កុំព្យូទ័រ">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <input type="file" id="audio-file-input" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audio-player"></audio>
+
+    <div id="modal-create-story" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-sky-200 relative my-6">
+            <button onclick="closeCreateStoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-2 mb-4">
+                <span class="text-2xl">✍️</span>
+                <h3 class="font-moul text-base text-sky-600">ចែករំលែករឿងរ៉ាវថ្មី</h3>
+            </div>
+
+            <form onsubmit="handleSaveStory(event)" class="space-y-3.5">
+                <!-- Writer Name -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">ឈ្មោះរបស់អ្នក / ឈ្មោះហៅក្រៅ *</label>
+                    <input type="text" id="story-author-input" required placeholder="ឧទាហរណ៍៖ សុខា ឬ ស្រីពៅ..." 
+                        class="w-full px-3.5 py-2 rounded-2xl border border-sky-200 bg-sky-50/50 text-xs focus:outline-none focus:ring-2 focus:ring-sky-400">
+                </div>
+
+                <!-- Title -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">ចំណងជើងរឿង *</label>
+                    <input type="text" id="story-title-input" required placeholder="ឧទាហរណ៍៖ ថ្ងៃលំហែកាយនៅមាត់សមុទ្រ..." 
+                        class="w-full px-3.5 py-2 rounded-2xl border border-sky-200 bg-sky-50/50 text-xs focus:outline-none focus:ring-2 focus:ring-sky-400">
+                </div>
+
+                <!-- Mood Selector -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">ជ្រើសរើសអារម្មណ៍ (Mood) *</label>
+                    <div class="flex items-center space-x-2 overflow-x-auto pb-1" id="mood-selector">
+                        <button type="button" onclick="selectMood('🥰')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-pink-100 border-pink-300">🥰</button>
+                        <button type="button" onclick="selectMood('🌸')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-slate-50">🌸</button>
+                        <button type="button" onclick="selectMood('☕')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-slate-50">☕</button>
+                        <button type="button" onclick="selectMood('☁️')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-slate-50">☁️</button>
+                        <button type="button" onclick="selectMood('✨')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-slate-50">✨</button>
+                        <button type="button" onclick="selectMood('🌊')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-slate-50">🌊</button>
+                        <button type="button" onclick="selectMood('🧸')" class="mood-btn px-3 py-1 rounded-2xl border border-slate-200 text-base bg-slate-50">🧸</button>
+                    </div>
+                    <input type="hidden" id="selected-mood-val" value="🥰">
+                </div>
+
+                <!-- Image File Picker -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">ជ្រើសរើសរូបភាព (ពីទូរស័ព្ទ/កុំព្យូទ័រ)</label>
+                    <input type="file" id="story-image-file" accept="image/*" onchange="previewSelectedImage(event)" 
+                        class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200">
+                    <div id="image-preview-container" class="mt-2 hidden">
+                        <img id="image-preview" class="h-28 rounded-2xl object-cover border border-sky-200 shadow-sm">
+                    </div>
+                </div>
+
+                <!-- Story Content -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">ខ្លឹមសារសរសេររៀបរាប់ *</label>
+                    <textarea id="story-content-input" required rows="4" placeholder="សរសេររៀបរាប់អារម្មណ៍ និងរឿងរ៉ាវរបស់អ្នកនៅទីនេះ..." 
+                        class="w-full px-3.5 py-2 rounded-2xl border border-sky-200 bg-sky-50/50 text-xs focus:outline-none focus:ring-2 focus:ring-sky-400 leading-relaxed"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeCreateStoryModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">បោះបង់</button>
+                    <button type="submit" id="submit-btn" class="px-5 py-2 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-300 flex items-center gap-1.5">
+                        <span>ចែករំលែកលើ Cloud</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-view-story" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-sky-200 relative my-8">
+            <button onclick="closeViewStoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Image Container -->
+            <div id="view-story-img-wrap" class="rounded-2xl overflow-hidden max-h-64 mb-4 bg-slate-100 hidden">
+                <img id="view-story-img" src="" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Header Info -->
+            <div class="space-y-1 mb-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span id="view-story-mood" class="text-base px-2.5 py-0.5 bg-sky-100 rounded-full">🥰</span>
+                        <span id="view-story-author" class="text-xs font-bold text-sky-600">អ្នកនិពន្ធ</span>
+                    </div>
+                    <span id="view-story-date" class="text-[11px] text-slate-400">2026-09-20</span>
+                </div>
+                <h2 id="view-story-title" class="font-moul text-base text-slate-800 leading-relaxed pt-1">
+                    ចំណងជើងរឿង
+                </h2>
+            </div>
+
+            <!-- Content -->
+            <div id="view-story-content" class="text-slate-600 text-xs leading-relaxed whitespace-pre-line mb-4 border-t border-b border-sky-100 py-3 max-h-52 overflow-y-auto">
+                <!-- Content injected via JS -->
+            </div>
+
+            <!-- Likes & Action -->
+            <div class="flex items-center justify-between mb-4">
+                <button id="view-story-like-btn" class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-pink-50 text-pink-500 text-xs font-bold border border-pink-200 hover:scale-105 transition">
+                    <i class="fa-solid fa-heart"></i>
+                    <span id="view-story-likes">0</span>
+                </button>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="border-t border-sky-100 pt-3 space-y-3">
+                <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-comments text-sky-400"></i>
+                    <span>មតិយោបល់ (Comments)</span>
+                </h4>
+
+                <!-- Comments List -->
+                <div id="comments-list" class="space-y-2 max-h-36 overflow-y-auto pr-1">
+                    <!-- Dynamic Comments -->
+                </div>
+
+                <!-- Add Comment Input -->
+                <form onsubmit="handleAddComment(event)" class="flex space-x-2 pt-1">
+                    <input type="text" id="comment-author-input" placeholder="ឈ្មោះ" required class="w-1/3 px-3 py-1.5 rounded-xl border border-sky-200 text-xs bg-sky-50/50">
+                    <input type="text" id="comment-text-input" placeholder="សរសេរមតិ..." required class="w-2/3 px-3 py-1.5 rounded-xl border border-sky-200 text-xs bg-sky-50/50">
+                    <button type="submit" class="bg-sky-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-sky-600 flex-shrink-0">ផ្ញើ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, onSnapshot, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global App ID & Config
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'cute-ocean-journal';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyDemoKeyOnlyForFallback",
+            authDomain: "demo.firebaseapp.com",
+            projectId: "demo-project",
+            storageBucket: "demo.appspot.com",
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let storiesData = [];
+        let activeStoryId = null;
+        let encodedBase64Image = '';
+
+        // Authentication Setup
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = userCredential.user;
+                } else {
+                    const userCredential = await signInAnonymously(auth);
+                    currentUser = userCredential.user;
+                }
+                listenToStories();
+            } catch (err) {
+                console.error("Auth error:", err);
+                listenToStories(); // Fallback load
+            }
+        }
+
+        // Firestore Public Path: /artifacts/{appId}/public/data/stories
+        function getStoriesCollection() {
+            return collection(db, 'artifacts', appId, 'public', 'data', 'stories');
+        }
+
+        // Realtime Listener for Shared Stories
+        function listenToStories() {
+            const storiesRef = getStoriesCollection();
+            
+            onSnapshot(storiesRef, (snapshot) => {
+                storiesData = [];
+                snapshot.forEach((docSnap) => {
+                    storiesData.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Sort by date descending
+                storiesData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                document.getElementById('loading-spinner').classList.add('hidden');
+                renderStories(storiesData);
+            }, (error) => {
+                console.error("Error fetching stories:", error);
+                document.getElementById('loading-spinner').innerHTML = `<span class="text-rose-400">មិនអាចភ្ជាប់ទៅ Cloud បានទេ។ សូមត្រួតពិនិត្យអ៊ីនធឺណិត។</span>`;
+            });
+        }
+
+        // Render Stories Grid
+        function renderStories(items) {
+            const grid = document.getElementById('stories-grid');
+            const empty = document.getElementById('stories-empty');
+            const countBadge = document.getElementById('story-count-badge');
+
+            grid.innerHTML = '';
+            countBadge.innerText = items.length;
+
+            if (items.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.classList.remove('hidden');
+
+            items.forEach(story => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl p-4 shadow-md shadow-sky-100 border border-sky-100 hover:shadow-xl hover:shadow-sky-200/50 transition-all duration-300 flex flex-col justify-between group relative';
+
+                const hasImg = story.image && story.image.trim() !== '';
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        ${hasImg ? `
+                            <div class="relative h-44 rounded-2xl overflow-hidden bg-sky-50 cursor-pointer" onclick="window.openStoryModal('${story.id}')">
+                                <img src="${story.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-full text-xs">${story.mood || '🥰'}</span>
+                            </div>
+                        ` : `
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl bg-sky-100/70 p-1.5 rounded-2xl">${story.mood || '🥰'}</span>
+                                <span class="text-[11px] text-sky-400 font-bold">${story.date || ''}</span>
+                            </div>
+                        `}
+
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] text-sky-500 font-bold mb-1">
+                                <span>✍️ ${story.author || 'អ្នកទស្សនា'}</span>
+                                ${hasImg ? `<span>${story.date || ''}</span>` : ''}
+                            </div>
+                            <h4 onclick="window.openStoryModal('${story.id}')" class="font-moul text-sm text-slate-800 hover:text-sky-600 transition cursor-pointer leading-relaxed line-clamp-2">
+                                ${story.title}
+                            </h4>
+                            <p class="text-xs text-slate-500 mt-1.5 line-clamp-3 leading-relaxed">
+                                ${story.content}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 mt-3 border-t border-sky-50 flex items-center justify-between">
+                        <button onclick="window.likeStory('${story.id}')" class="flex items-center space-x-1 text-xs text-pink-400 hover:text-pink-500 font-bold transition">
+                            <i class="fa-solid fa-heart"></i>
+                            <span>${story.likes || 0}</span>
+                        </button>
+
+                        <button onclick="window.openStoryModal('${story.id}')" class="text-xs font-bold text-sky-500 hover:underline flex items-center gap-1">
+                            <span>មើលរឿងពេញ</span>
+                            <span class="text-[10px] bg-sky-100 px-1.5 py-0.5 rounded-full">💬 ${(story.comments || []).length}</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Save Story to Cloud Firestore
+        window.handleSaveStory = async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>កំពុងរក្សាទុក...</span>`;
+
+            const author = document.getElementById('story-author-input').value.trim();
+            const title = document.getElementById('story-title-input').value.trim();
+            const mood = document.getElementById('selected-mood-val').value;
+            const content = document.getElementById('story-content-input').value.trim();
+
+            const storyId = 'story_' + Date.now();
+            const newStoryDoc = {
+                author: author || 'អ្នកទស្សនា',
+                title,
+                mood,
+                content,
+                image: encodedBase64Image,
+                date: new Date().toISOString().split('T')[0],
+                timestamp: Date.now(),
+                likes: 0,
+                comments: []
+            };
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'stories', storyId);
+                await setDoc(docRef, newStoryDoc);
+                window.closeCreateStoryModal();
+            } catch (err) {
+                console.error("Error saving story:", err);
+                alert("មិនអាចរក្សាទុកបានទេ។ សូមព្យាយាមម្តងទៀត!");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>ចែករំលែកលើ Cloud</span>`;
+            }
+        };
+
+        // Like Story Counter
+        window.likeStory = async function(storyId) {
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'stories', storyId);
+                await updateDoc(docRef, {
+                    likes: increment(1)
+                });
+            } catch (err) {
+                console.error("Error liking story:", err);
+            }
+        };
+
+        // Add Comment
+        window.handleAddComment = async function(e) {
+            e.preventDefault();
+            if (!activeStoryId) return;
+
+            const author = document.getElementById('comment-author-input').value.trim();
+            const text = document.getElementById('comment-text-input').value.trim();
+
+            if (!text) return;
+
+            const newComment = {
+                author: author || 'អ្នកទស្សនា',
+                text,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'stories', activeStoryId);
+                await updateDoc(docRef, {
+                    comments: arrayUnion(newComment)
+                });
+                document.getElementById('comment-text-input').value = '';
+                
+                // Update detail modal comments list locally
+                const currentStory = storiesData.find(s => s.id === activeStoryId);
+                if (currentStory) {
+                    currentStory.comments = currentStory.comments || [];
+                    currentStory.comments.push(newComment);
+                    renderComments(currentStory.comments);
+                }
+            } catch (err) {
+                console.error("Error commenting:", err);
+            }
+        };
+
+        // Open Story View Modal
+        window.openStoryModal = function(storyId) {
+            activeStoryId = storyId;
+            const story = storiesData.find(s => s.id === storyId);
+            if (!story) return;
+
+            document.getElementById('view-story-title').innerText = story.title;
+            document.getElementById('view-story-author').innerText = story.author || 'អ្នកទស្សនា';
+            document.getElementById('view-story-mood').innerText = story.mood || '🥰';
+            document.getElementById('view-story-date').innerText = story.date || '';
+            document.getElementById('view-story-content').innerText = story.content;
+            document.getElementById('view-story-likes').innerText = story.likes || 0;
+
+            const imgWrap = document.getElementById('view-story-img-wrap');
+            const imgEl = document.getElementById('view-story-img');
+            if (story.image && story.image.trim() !== '') {
+                imgEl.src = story.image;
+                imgWrap.classList.remove('hidden');
+            } else {
+                imgWrap.classList.add('hidden');
+            }
+
+            document.getElementById('view-story-like-btn').onclick = () => {
+                window.likeStory(story.id);
+                document.getElementById('view-story-likes').innerText = (story.likes || 0) + 1;
+            };
+
+            renderComments(story.comments || []);
+            document.getElementById('modal-view-story').classList.remove('hidden');
+        };
+
+        function renderComments(comments) {
+            const list = document.getElementById('comments-list');
+            list.innerHTML = '';
+            if (comments.length === 0) {
+                list.innerHTML = `<p class="text-[11px] text-slate-400 italic">មិនទាន់មានមតិយោបល់នៅឡើយទេ...</p>`;
+                return;
+            }
+            comments.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'bg-sky-50/70 p-2 rounded-xl text-xs space-y-0.5 border border-sky-100';
+                item.innerHTML = `
+                    <div class="flex items-center justify-between font-bold text-sky-600 text-[11px]">
+                        <span>${c.author}</span>
+                        <span class="text-[10px] text-slate-400 font-normal">${c.date || ''}</span>
+                    </div>
+                    <p class="text-slate-600">${c.text}</p>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Image Preview and Conversion to Base64
+        window.previewSelectedImage = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    encodedBase64Image = e.target.result;
+                    document.getElementById('image-preview').src = encodedBase64Image;
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // Initialize Auth
+        initAuth();
+    </script>
+
+    <script>
+        // Floating Bubbles Generator
+        function initBubbles() {
+            const container = document.getElementById('bubbles-container');
+            for (let i = 0; i < 10; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 35 + 20;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.animationDuration = `${Math.random() * 8 + 10}s`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(bubble);
+            }
+        }
+        initBubbles();
+
+        // Modal Handlers
+        function openCreateStoryModal() {
+            document.getElementById('story-author-input').value = '';
+            document.getElementById('story-title-input').value = '';
+            document.getElementById('story-content-input').value = '';
+            document.getElementById('story-image-file').value = '';
+            document.getElementById('image-preview-container').classList.add('hidden');
+            selectMood('🥰');
+            document.getElementById('modal-create-story').classList.remove('hidden');
+        }
+
+        function closeCreateStoryModal() {
+            document.getElementById('modal-create-story').classList.add('hidden');
+        }
+
+        function closeViewStoryModal() {
+            document.getElementById('modal-view-story').classList.add('hidden');
+        }
+
+        function selectMood(emoji) {
+            document.getElementById('selected-mood-val').value = emoji;
+            const buttons = document.querySelectorAll('#mood-selector .mood-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText === emoji) {
+                    btn.classList.add('bg-pink-100', 'border-pink-300');
+                    btn.classList.remove('bg-slate-50');
+                } else {
+                    btn.classList.remove('bg-pink-100', 'border-pink-300');
+                    btn.classList.add('bg-slate-50');
+                }
+            });
+        }
+
+        // ================= AUDIO PLAYER LOGIC =================
+        const audioPlayer = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-btn');
+        const vinyl = document.getElementById('vinyl-disc');
+        const songTitle = document.getElementById('song-title');
+        const musicTime = document.getElementById('music-time');
+        const audioProgress = document.getElementById('audio-progress');
+
+        let isPlaying = false;
+
+        function handleAudioUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const objectUrl = URL.createObjectURL(file);
+                audioPlayer.src = objectUrl;
+                songTitle.innerText = file.name;
+                isPlaying = false;
+                togglePlay();
+            }
+        }
+
+        function togglePlay() {
+            if (!audioPlayer.src) {
+                alert("សូមជ្រើសរើសបទចម្រៀងចេញពីទូរស័ព្ទ ឬកុំព្យូទ័ររបស់អ្នកជាមុនសិន!");
+                return;
+            }
+
+            if (isPlaying) {
+                audioPlayer.pause();
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fa-solid fa-play ml-0.5"></i>';
+                vinyl.classList.remove('animate-spin-slow');
+            } else {
+                audioPlayer.play().then(() => {
+                    isPlaying = true;
+                    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                    vinyl.classList.add('animate-spin-slow');
+                }).catch(e => {
+                    alert("មិនអាចចាក់បទចម្រៀងបានទេ។");
+                });
+            }
+        }
+
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (audioPlayer.duration) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                audioProgress.value = progress;
+
+                const curMins = Math.floor(audioPlayer.currentTime / 60);
+                const curSecs = Math.floor(audioPlayer.currentTime % 60);
+                musicTime.innerText = `${curMins < 10 ? '0' : ''}${curMins}:${curSecs < 10 ? '0' : ''}${curSecs}`;
+            }
+        });
+
+        audioProgress.addEventListener('input', () => {
+            if (audioPlayer.duration) {
+                audioPlayer.currentTime = (audioProgress.value / 100) * audioPlayer.duration;
+            }
+        });
+    </script>
+</body>
+</html>
